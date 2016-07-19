@@ -7,10 +7,18 @@ import re
 #For the given document, weed out stopwords and non-alphanumeric, count the number of occurences of each word, and store in wordDict
 def parseReview(file, stopwordList):
   wordDict = {}
+  negationList = ["no","not","never","can't","won't","cannot","didn't","couldn't"]
+  negationFlag = False
   with open(file) as f:
     for line in f:
       for word in re.split('\W+',line):
+        if word in negationList:
+            negationFlag = True
+            continue
         if word.isalnum() and word not in stopwordList:
+          if negationFlag:
+            word = "!"+word
+            negationFlag = False
           if word not in wordDict:
             wordDict[word] = 1
           else:

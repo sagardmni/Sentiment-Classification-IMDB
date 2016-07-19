@@ -15,11 +15,19 @@ def parseFile(filename):
 def parseReviews(mypath, stopwordList):
   filelist = os.listdir(mypath) 
   wordDict = {}
+  negationList = ["no","not","never","can't","won't","cannot","didn't","couldn't"]
+  negationFlag = False
   for file in filelist:
     with open(mypath + "/" + file,"r") as f:
       for line in f:
         for word in re.split('\W+',line):
+          if word in negationList:
+            negationFlag = True
+            continue
           if word.isalnum() and word not in stopwordList:
+            if negationFlag:
+              word = "!" + word
+              negationFlag = False
             if word not in wordDict:
               wordDict[word] = 1
             else:
