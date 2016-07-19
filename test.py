@@ -2,13 +2,14 @@ import sys
 import pickle
 import os
 import math
+import re
 
 #For the given document, weed out stopwords and non-alphanumeric, count the number of occurences of each word, and store in wordDict
 def parseReview(file, stopwordList):
   wordDict = {}
   with open(file) as f:
     for line in f:
-      for word in line.split():
+      for word in re.split('\W+',line):
         if word.isalnum() and word not in stopwordList:
           if word not in wordDict:
             wordDict[word] = 1

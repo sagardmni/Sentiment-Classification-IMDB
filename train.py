@@ -1,6 +1,7 @@
 import sys
 import os
 import pickle
+import re
 
 def parseFile(filename):
   wordlist = []
@@ -17,7 +18,7 @@ def parseReviews(mypath, stopwordList):
   for file in filelist:
     with open(mypath + "/" + file,"r") as f:
       for line in f:
-        for word in line.split():
+        for word in re.split('\W+',line):
           if word.isalnum() and word not in stopwordList:
             if word not in wordDict:
               wordDict[word] = 1
