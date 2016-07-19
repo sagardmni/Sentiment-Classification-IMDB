@@ -2,7 +2,7 @@ import sys
 import os
 import pickle
 
-def parseSingleFile(filename):
+def parseFile(filename):
   wordlist = []
   with open(filename,"r") as f:
     for line in f:
@@ -25,7 +25,7 @@ def parseReviews(mypath, stopwordList):
               wordDict[word] += 1
   return wordDict
 
-stopwordList = parseSingleFile('stopwords.txt')
+stopwordList = parseFile('stopwords.txt')
 
 curDir = os.getcwd()
 # os.chdir(curDir + "/txt_sentoken/train")
