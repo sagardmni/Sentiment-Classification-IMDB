@@ -4,6 +4,7 @@ import pickle
 import re
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 
 def parseFile(filename):
   wordlist = []
@@ -20,6 +21,7 @@ def parseReviews(mypath):
   negationList = ["no","not","never","can't","won't","cannot","didn't","couldn't"]
   negationFlag = False
   stopwordList = set(stopwords.words("english"))
+  stemmer = PorterStemmer()
   for file in filelist:
     with open(mypath + "/" + file,"r") as f:
       word_list = word_tokenize(f.read())
@@ -28,6 +30,7 @@ def parseReviews(mypath):
         negationFlag = True
         continue
       if word.isalnum() and word not in stopwordList:
+        word = stemmer.stem(word)
         if negationFlag:
           word = "!" + word
           negationFlag = False

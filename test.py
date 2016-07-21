@@ -5,9 +5,11 @@ import math
 import re
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+
 
 #For the given document, weed out stopwords and non-alphanumeric, count the number of occurences of each word, and store in wordDict
-def parseReview(file, stopwordList):
+def parseReview(file, stopwordList,stemmer):
   wordDict = {}
   negationList = ["no","not","never","can't","won't","cannot","didn't","couldn't"]
   negationFlag = False
@@ -18,6 +20,7 @@ def parseReview(file, stopwordList):
         negationFlag = True
         continue
     if word.isalnum() and word not in stopwordList:
+      word = stemmer.stem(word)
       if negationFlag:
         word = "!"+word
         negationFlag = False
@@ -76,14 +79,14 @@ with open('neg.pickle', 'rb') as handle:
   negDict = pickle.load(handle)
 
 stopwordList = set(stopwords.words("english"))
-
+stemmer = PorterStemmer()
 os.chdir(sys.argv[1])
 posList = os.listdir(os.getcwd() + "/pos")
 negList = os.listdir(os.getcwd() + "/neg")
 
 posCount = 0
 for review in posList:
-  docWordDict = parseReview(os.getcwd() + "/pos/" + review, stopwordList)
+  docWordDict = parseReview(os.getcwd() + "/pos/" + review, stopwordList, stemmer)
   posCount += classifyMe(docWordDict, posDict, negDict)
 
 posAccuracy = (float(posCount)/len(posList))*100
@@ -91,7 +94,7 @@ print("Accuracy of classifying positive reviews as positive = " + str(posAccurac
 
 negcount = 0
 for review in negList:
-  docWordDict = parseReview(os.getcwd() + "/neg/" + review, stopwordList)
+  docWordDict = parseReview(os.getcwd() + "/neg/" + review, stopwordList, stemmer)
   negcount += (not classifyMe(docWordDict, posDict, negDict))
 
 negAccuracy = (float(negcount)/len(negList))*100
