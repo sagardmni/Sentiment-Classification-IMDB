@@ -3,6 +3,8 @@ import pickle
 import os
 import math
 import re
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
 #For the given document, weed out stopwords and non-alphanumeric, count the number of occurences of each word, and store in wordDict
 def parseReview(file, stopwordList):
@@ -10,19 +12,19 @@ def parseReview(file, stopwordList):
   negationList = ["no","not","never","can't","won't","cannot","didn't","couldn't"]
   negationFlag = False
   with open(file) as f:
-    for line in f:
-      for word in re.split('\W+',line):
-        if word in negationList:
-            negationFlag = True
-            continue
-        if word.isalnum() and word not in stopwordList:
-          if negationFlag:
-            word = "!"+word
-            negationFlag = False
-          if word not in wordDict:
-            wordDict[word] = 1
-          else:
-            wordDict[word] += 1
+    word_list = word_tokenize(f.read())
+  for word in word_list:
+    if word in negationList:
+        negationFlag = True
+        continue
+    if word.isalnum() and word not in stopwordList:
+      if negationFlag:
+        word = "!"+word
+        negationFlag = False
+      if word not in wordDict:
+        wordDict[word] = 1
+      else:
+        wordDict[word] += 1
   return wordDict
 
 def classifyMe(docWordDict, posDict, negDict):
@@ -72,10 +74,9 @@ with open('pos.pickle', 'rb') as handle:
   posDict = pickle.load(handle)
 with open('neg.pickle', 'rb') as handle:
   negDict = pickle.load(handle)
-with open('stopword.pickle', 'rb') as handle:
-  stopwordList = pickle.load(handle)
 
-# os.chdir(os.getcwd() + "/txt_sentoken/test")
+stopwordList = set(stopwords.words("english"))
+
 os.chdir(sys.argv[1])
 posList = os.listdir(os.getcwd() + "/pos")
 negList = os.listdir(os.getcwd() + "/neg")
