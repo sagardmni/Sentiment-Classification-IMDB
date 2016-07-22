@@ -27,8 +27,14 @@ def parseReviews(mypath):
       word_list = word_tokenize(f.read())
     for word in word_list:
       if word in negationList:
-        negationFlag = True
+        #double negative
+        if negationFlag:
+          negationFlag = False
+        else:
+          negationFlag = True
         continue
+      if not word.isalnum():
+        negationFlag = False
       if word.isalnum() and word not in stopwordList:
         word = stemmer.stem(word)
         if negationFlag:
